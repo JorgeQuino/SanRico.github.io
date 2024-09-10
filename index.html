@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIANGULOS</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('https://www.example.com/geometry_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .formula {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .triangle-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 40px;
+        }
+
+        .square {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #fff;
+            border-radius: 8px;
+            transition: background-color 1s ease, color 1s ease, background-image 1s ease;
+        }
+
+        .hipotenusa {
+            top: -4px;
+            left: 80px;
+            background-color: transparent;
+            border: 2px solid #000;
+            transform: rotate(0deg);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cateto-a,
+        .cateto-b {
+            position: absolute;
+            top: 115px;
+            width: 100px;
+            height: 100px;
+            transform-origin: center;
+            transition: background-image 1s ease, color 1s ease;
+        }
+
+        .cateto-a {
+            left: 10px;
+            background-color: #e74c3c;
+            background-image: linear-gradient(135deg, #e74c3c, #f39c12);
+            transform: rotate(-30deg);
+        }
+
+        .cateto-b {
+            left: 150px;
+            background-color: #3498db;
+            background-image: linear-gradient(135deg, #3498db, #2ecc71);
+            transform: rotate(30deg);
+        }
+
+        .content {
+            color: white;
+            z-index: 2;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .empty {
+            background-color: transparent !important;
+            color: black;
+        }
+
+        .paint-animation {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(231, 76, 60, 0.7), rgba(52, 152, 219, 0.7));
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 1s ease-out;
+            z-index: 1;
+        }
+
+        .filled .paint-animation {
+            transform: scaleY(1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-container input {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #3498db;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            width: 200px;
+        }
+
+        .input-container input:focus {
+            border-color: #2980b9;
+        }
+
+        .input-container label {
+            margin-bottom: 5px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .result {
+            font-size: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .inputs-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Estilos de íconos */
+        .icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+        }
+
+        .icon-ruler {
+            top: 10px;
+            left: -40px;
+            background: url('https://www.example.com/ruler_icon.png') no-repeat center;
+            background-size: contain;
+        }
+
+        .icon-compass {
+            bottom: 10px;
+            right: -40px;
+            background: url('https://www.example.com/compass_icon.png') no-repeat center;
+            background-size: contain;
+        }
+
+        .icon-triangle {
+            top: -40px;
+            right: 80px;
+            background: url('https://www.example.com/triangle_icon.png') no-repeat center;
+            background-size: contain;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="triangle-container">
+            <div class="square hipotenusa" id="hipotenusa">
+                <div class="paint-animation" id="paintEffect"></div>
+                <div class="content">Hipotenusa</div>
+            </div>
+            <div class="square cateto-a" id="catetoA">
+                <div class="content">Cateto A</div>
+            </div>
+            <div class="square cateto-b" id="catetoB">
+                <div class="content">Cateto B</div>
+            </div>
+
+            <!-- Iconos decorativos -->
+            <div class="icon icon-ruler"></div>
+            <div class="icon icon-compass"></div>
+            <div class="icon icon-triangle"></div>
+        </div>
+
+        <div class="input-container">
+            <div class="inputs-row">
+                <div class="input-group">
+                    <label for="inputA">Cateto A:</label>
+                    <input type="number" id="inputA" placeholder="Ingrese el valor de Cateto A">
+                </div>
+                <div class="input-group">
+                    <label for="inputB">Cateto B:</label>
+                    <input type="number" id="inputB" placeholder="Ingrese el valor de Cateto B">
+                </div>
+            </div>
+            <div id="result" class="result"></div>
+            <br><br>
+            <div class="formula" id="formula">
+            </div>
+            <button id="toggleButton">Calcular</button>
+        </div>
+    </div>
+
+    <script>
+        var isFilled = false;
+
+        document.getElementById('toggleButton').addEventListener('click', function () {
+            var catetoA = document.getElementById('catetoA');
+            var catetoB = document.getElementById('catetoB');
+            var hipotenusa = document.getElementById('hipotenusa');
+            var paintEffect = document.getElementById('paintEffect');
+            var inputA = parseFloat(document.getElementById('inputA').value) || 0;
+            var inputB = parseFloat(document.getElementById('inputB').value) || 0;
+            var button = document.getElementById('toggleButton');
+            var formula = document.getElementById('formula');
+
+            if (!isFilled) {
+                var hipotenusaSquared = (inputA * inputA + inputB * inputB).toFixed(2);
+
+                document.getElementById('result').textContent = 'Hipotenusa²: ' + hipotenusaSquared;
+
+                formula.innerHTML = 'C² = a² + b² <br> C² = ' + inputA + '² + ' + inputB + '² <br> C² = ' + hipotenusaSquared;
+
+                catetoA.classList.add('filled');
+                catetoB.classList.add('filled');
+                hipotenusa.classList.add('filled');
+                button.textContent = 'Restaurar';
+            } else {
+                catetoA.classList.remove('filled');
+                catetoB.classList.remove('filled');
+                hipotenusa.classList.remove('filled');
+                paintEffect.classList.remove('active');
+                document.getElementById('result').textContent = '';
+                formula.innerHTML = '';
+                button.textContent = 'Calcular';
+            }
+
+            isFilled = !isFilled;
+        });
+    </script>
+    <p>Susana Rico L.</p>
+</body>
+
+</html>
+
+
